@@ -1,0 +1,133 @@
+<!-- <div class="container">
+    <table class="table text-center" >
+        <thead class="thead table-secondary">
+        <tr>
+          <th>Id</th>
+          <th>Table</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Cost</th>
+          <th>Status</th>
+          <th>Detail</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let history of historydata" > 
+            <th >{{history['order_id']}} </th>
+            <td >{{history['order_table']}} </td>
+            <td >{{history['order_costumer']}}</td>
+            <td >{{history['order_newdate']}}</td>
+            <td >{{history['order_newtime']}}</td>
+            <td >{{history['order_cost']}}</td>
+            <td >  <ngb-alert [dismissible]="false" type="success" class="text-center">{{history['order_status']}}</ngb-alert></td>
+            <td>
+                <button class="btn btn-outline-primary" (click)="viewDetail(viewdetail,history)">view</button>
+               <div *ngIf="orderdetaildata.status != 'กำลังดำเนินการ';else elseBlock">
+              </div>
+              <ng-template #elseBlock>
+                <div *ngIf="orderDetail['orderdetail_status'] != 'เสร็จแล้ว';else elseBlock1">
+                  <button class="btn btn-outline-warning "  >{{orderDetail['orderdetail_status']}}</button>
+                </div>
+                <ng-template #elseBlock1>
+                    <button class="btn btn-outline-success">{{orderDetail['orderdetail_status']}}</button>
+                  </ng-template>
+                </ng-template> 
+            </td>
+      </tr>
+      </tbody>
+    </table>
+</div> -->
+
+<div class="container">
+<div class="card">
+  <table class="table text-center " >
+    <thead class="thead table-secondary">
+    <tr>
+      <th>Id</th>
+      <th>Table</th>
+      <th>Customer</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Cost</th>
+      <th>Status</th>
+      <th>Detail</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let history of gethistorydata ">
+      <!-- content here -->
+            <th >{{history['order_id']}} </th>
+            <td >{{history['order_table']}} </td>
+            <td >{{history['order_costumer']}}</td>
+            <td >{{history['order_newdate']}}</td>
+            <td >{{history['order_newtime']}}</td>
+            <td >{{history['order_cost']}}</td>
+            <td > <ngb-alert [dismissible]="false" type="success" class="text-center">{{history['order_status']}}</ngb-alert></td>
+            <td><button class="btn btn-outline-primary" (click)="viewDetail(viewdetail,history)">view</button></td>
+    </tr>
+  </tbody>
+  </table>
+</div> 
+  <div class="d-flex justify-content-between p-2">
+    <ngb-pagination [collectionSize]="collectionSize" [(page)]="page" [pageSize]="pageSize"></ngb-pagination>
+  
+    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+      <option [ngValue]="10">10 items per page</option>
+      <option [ngValue]="50">50 items per page</option>
+      <option [ngValue]="100">100 items per page</option>
+    </select>
+  </div>
+
+</div>
+
+
+<ng-template #viewdetail let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title"><i-feather name="check-square"></i-feather>Detail</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        
+        <div class="h3">Order : {{check['order_id']}}</div>
+        <div class="row">
+        <div class="h5 col">Table : {{check['order_table']}}</div>
+        <div class="h5 col">Customer : {{check['order_costumer']}}</div>
+        </div>
+       
+        <div class="row">
+          <div class="col">Date : {{check['order_newdate']}}</div>
+          <div class="col">Time : {{check['order_newtime']}}</div>
+        </div>
+        <div class="row">
+        <div class="h5 col">Total cost : <span class="text-primary">{{check['order_cost']}}</span> bath</div>
+        <div class="h5 col">Status : {{check['order_status']}}</div>
+    </div>
+      </div>
+      <div class="card box-shadow">
+      <table class="table text-left" >
+        <thead class="thead table-secondary">
+        <tr>
+          <th>Menu</th>
+          <th>Cost</th>
+          <th>Detail</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let orderDetail of orderdetaildata" > 
+            <th >{{orderDetail['orderdetail_menu']}} </th>
+            <td >{{orderDetail['orderdetail_cost']}} </td>
+            <td >{{orderDetail['orderdetail_detail']}}</td> 
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+    <div class="modal-footer" >
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">close</button>
+    </div>
+
+  </ng-template>

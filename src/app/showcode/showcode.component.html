@@ -1,0 +1,324 @@
+<div class="container">
+
+    <div class="nav" >
+      <button type="button" class="btn btn-outline-success" (click)="modelAddCode(addcode)">
+        <i-feather name="plus"></i-feather> Add Code
+      </button>
+      <!-- <button type="button" class="btn btn-outline-warning" (click)=" modalExtraDetail(modalextradetail)">
+        Extra
+      </button>
+      
+     -->
+      <form class="form-inline my-2 my-lg-0" style="margin-left: auto;"  >
+        <i-feather name="search"></i-feather>
+        <div class="d-inline-block" ngbDropdown >
+          <button class="btn btn-outline-primary mr-2" id="dropdownBasic1" ngbDropdownToggle>Search Type</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1" >
+            <button ngbDropdownItem value="0" (click)="FilterCode($event)">ทั้งหมด</button>
+            <button ngbDropdownItem value="1" (click)="FilterCode($event)">Normal</button>
+            <button ngbDropdownItem value="2" (click)="FilterCode($event)">Percent</button>
+            <!-- <button ngbDropdownItem value="3" (click)="FilterProduct($event)">รหัสลับ</button> -->
+          </div>
+        </div>
+        
+        <input class="form-control mr-sm-2 " type="text" placeholder="Search" (keyup)="getValueSaerch($event)" aria-label="Search" >
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="searchProduct()" >Search</button> -->
+      </form>
+    </div>
+    
+    <br>
+    <div *ngIf="status != 0; else elseBlock" >
+      <div class="card-columns" style="padding-left: 30px;">
+      <div class="card box-shadow" style="width: 18rem;" *ngFor="let code of codeArray ">
+        <img src="" class="card-img-top" style="max-width:100%;height:auto;">
+        <div class="card-body">
+          <h5 class="card-title">
+            
+            {{ code['code_name'] }}</h5>
+          <p class="card-text">Cost : ลด {{ code['code_cost'] }} 
+            <span *ngIf="code['code_type'] == 'Normal'">บาท</span>
+            <span *ngIf="code['code_type'] == 'Percent'">%</span>
+          </p>
+          <p class="card-text">Number : {{ code['code_number'] }} สิทธิ์</p>
+          <p class="card-text">Type : {{ code['code_type'] }}</p>
+          <p class="card-text">Start date : {{ code.code_newstartdate }}</p>
+          <p class="card-text">End date : {{ code['code_newenddate'] }}</p>
+          <p class="card-text">Status : {{ code['code_status'] }}</p>
+          <p class="card-text">Detail : {{ code['code_detail'] }}</p>
+          <table style="margin: auto;">
+            <tr >
+              <td><button href="#" class="btn btn-outline-warning" (click)="modelUpdateCode(updatecode,code)">Update</button></td>
+              <td><button href="#" class="btn btn-outline-danger" (click)="modelDeleteCode(deletecode,code)">Delete</button></td>
+            </tr>
+          </table>
+          
+        </div>
+      </div>
+      </div> 
+    </div>
+    
+    <ng-template #elseBlock >
+      <div >
+        <p style="text-align: center">No Code</p>
+      </div>
+    </ng-template>
+    
+    </div>
+    
+    <!-- INSERT -->
+<ng-template #addcode let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Add Code</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form  [formGroup]="codeData">
+        <div class="form-group">
+          <label >Code Name </label>
+          <input placeholder="Code Name" id="code_name" class="form-control" formControlName="code_name" required>
+          <div *ngIf="codeData.value.code_name == '' || codeData.value.code_name == null" class="alert alert-danger">
+            Code Name is required.
+          </div>
+
+          <label >Code cost </label>
+          <input placeholder="Code Cost" id="code_cost" name="code_cost" class="form-control" pattern="[0-9]" type="number" formControlName="code_cost" required>
+          <div *ngIf="codeData.value.code_cost == '' || codeData.value.code_cost == null" class="alert alert-danger">
+            Code Cost is required.
+          </div>
+
+          <label >Code number </label>
+          <input placeholder="Code number" id="code_number" name="code_number" class="form-control" type="number" formControlName="code_number" required>
+          <div *ngIf="codeData.value.code_number == '' || codeData.value.code_number == null" class="alert alert-danger">
+            Code status is required.
+          </div>
+
+          <label for="power">Code type</label>
+          <select placeholder="Code type" class="form-control" id="code_type" required formControlName="code_type">
+          <option *ngFor="let type of types" [value]="type" class="form-control" ngbDropdownItem>{{ type }}</option>
+          </select>
+          <div *ngIf="codeData.value.code_type == '' || codeData.value.code_type == null" class="alert alert-danger">
+            Code Type is required.
+          </div>
+          <br>
+          <label >Start to End date </label>
+          <form class="form-inline">
+           
+            <div class="form-group hidden">
+              <div class="input-group">
+                <input name="datepicker"
+                       class="form-control"
+                       ngbDatepicker
+                       #datepicker="ngbDatepicker"
+                       [autoClose]="'outside'"
+                       (dateSelect)="onDateSelection($event)"
+                       [displayMonths]="2"
+                       [dayTemplate]="t"
+                       outsideDays="hidden"
+                       [startDate]="fromDate">
+                <ng-template #t let-date let-focused="focused">
+                  <span class="custom-day"
+                        [class.focused]="focused"
+                        [class.range]="isRange(date)"
+                        [class.faded]="isHovered(date) || isInside(date)"
+                        (mouseenter)="hoveredDate = date"
+                        (mouseleave)="hoveredDate = null">
+                    {{ date.day }}
+                  </span>
+                </ng-template>
+              </div>
+            </div>
+            <br>
+            <div class="form-group">
+              <div class="input-group">
+               
+                <input #dpFromDate
+                       class="form-control" placeholder="yyyy-mm-dd"
+                       name="dpFromDate"
+                       [value]="formatter.format(fromDate)"
+                       (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button"><i-feather name="calendar"></i-feather></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group ml-2">
+              <div class="input-group">
+                <input #dpToDate
+                       class="form-control" placeholder="yyyy-mm-dd"
+                       name="dpToDate"
+                       [value]="formatter.format(toDate)"
+                       (input)="toDate = validateInput(toDate, dpToDate.value)">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button"><i-feather name="calendar"></i-feather></button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+
+
+      <label for="power">Code status</label>
+      <select placeholder="Code status" class="form-control" id="code_status"  required formControlName="code_status">
+      <option *ngFor="let status of statuses" [value]="status" class="form-control" ngbDropdownItem>{{ status }}</option>
+      </select>
+      <div *ngIf="codeData.value.code_status == '' || codeData.value.code_status == null" class="alert alert-danger">
+        Code status is required.
+      </div>
+
+      <label >Code detail </label>
+      <input placeholder="Code detail" id="code_detail" name="code_detail" class="form-control" type="text" formControlName="code_detail" required>
+      
+            </div>
+      </form>
+    </div>
+    <!-- *ngIf="productData.value.product_name != null && productData.value.product_name != '' && productData.value.product_cost != null && productData.value.product_cost != '' && productData.value.product_type != null && productData.value.product_type != '' && productData.value.product_status != null && productData.value.product_status != ''" -->
+    <div class="modal-footer" *ngIf="codeData.value.code_name != null && codeData.value.code_name != '' && codeData.value.code_cost != null && codeData.value.code_cost != '' && codeData.value.code_number != null && codeData.value.code_number != '' && codeData.value.code_status != null && codeData.value.code_status != ''" >
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    </div>
+  </ng-template>
+  <!-- INSERT END-->
+  
+
+  <!-- UPDATE -->
+  <ng-template #updatecode let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Update Code</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form  [formGroup]="codeData">
+        <div class="form-group">
+          <label >Code Name </label>
+          <input placeholder="Code Name" id="code_name" class="form-control" formControlName="code_name" required>
+          <div *ngIf="codeData.value.code_name == '' || codeData.value.code_name == null" class="alert alert-danger">
+            Code Name is required.
+          </div>
+
+          <label >Code cost </label>
+          <input placeholder="Code Cost" id="code_cost" name="code_cost" class="form-control" pattern="[0-9]" type="number" min="0" formControlName="code_cost" required>
+          <div *ngIf="codeData.value.code_cost == '' || codeData.value.code_cost == null" class="alert alert-danger">
+            Code Cost is required.
+          </div>
+
+          <label >Code number </label>
+          <input placeholder="Code number" id="code_number" name="code_number" class="form-control" type="number" min="0" formControlName="code_number" required>
+          <div *ngIf="codeData.value.code_number == '' || codeData.value.code_number == null" class="alert alert-danger">
+            Code status is required.
+          </div>
+
+          <label for="power">Code type</label>
+          <select placeholder="Code type" class="form-control" id="code_type" required formControlName="code_type">
+          <option *ngFor="let type of types" [value]="type" class="form-control" ngbDropdownItem>{{ type }}</option>
+          </select>
+          <div *ngIf="codeData.value.code_type == '' || codeData.value.code_type == null" class="alert alert-danger">
+            Code Type is required.
+          </div>
+          <br>
+          <label >Start to End date </label>
+          <form class="form-inline">
+           
+            <div class="form-group hidden">
+              <div class="input-group">
+                <input name="datepicker"
+                       class="form-control"
+                       ngbDatepicker
+                       #datepicker="ngbDatepicker"
+                       [autoClose]="'outside'"
+                       (dateSelect)="onDateSelection($event)"
+                       [displayMonths]="2"
+                       [dayTemplate]="t"
+                       outsideDays="hidden"
+                       [startDate]="fromDate">
+                <ng-template #t let-date let-focused="focused">
+                  <span class="custom-day"
+                        [class.focused]="focused"
+                        [class.range]="isRange(date)"
+                        [class.faded]="isHovered(date) || isInside(date)"
+                        (mouseenter)="hoveredDate = date"
+                        (mouseleave)="hoveredDate = null">
+                    {{ date.day }}
+                  </span>
+                </ng-template>
+              </div>
+            </div>
+            <br>
+            <div class="form-group">
+              <div class="input-group">
+               
+                <input #dpFromDate
+                       class="form-control" placeholder="yyyy-mm-dd"
+                       name="dpFromDate"
+                       [value]="formatter.format(fromDate)"
+                       (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button"><i-feather name="calendar"></i-feather></button>
+                </div>
+              </div>
+            </div>
+            <div class="form-group ml-2">
+              <div class="input-group">
+                <input #dpToDate
+                       class="form-control" placeholder="yyyy-mm-dd"
+                       name="dpToDate"
+                       [value]="formatter.format(toDate)"
+                       (input)="toDate = validateInput(toDate, dpToDate.value)">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary calendar" (click)="datepicker.toggle()" type="button"><i-feather name="calendar"></i-feather></button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+
+
+      <label for="power">Code status</label>
+      <select placeholder="Code status" class="form-control" id="code_status"  required formControlName="code_status">
+      <option *ngFor="let status of statuses" [value]="status" class="form-control" ngbDropdownItem>{{ status }}</option>
+      </select>
+      <div *ngIf="codeData.value.code_status == '' || codeData.value.code_status == null" class="alert alert-danger">
+        Code status is required.
+      </div>
+
+      <label >Code detail </label>
+      <input placeholder="Code detail" id="code_detail" name="code_detail" class="form-control" type="text" formControlName="code_detail" required>
+      
+            </div>
+      </form>
+
+    </div>
+    <div class="modal-footer"  *ngIf="codeData.value.code_name != null && codeData.value.code_name != '' && codeData.value.code_cost != null && codeData.value.code_cost != '' && codeData.value.code_number != null && codeData.value.code_number != '' && codeData.value.code_status != null && codeData.value.code_status != ''" >
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+    </div>
+  </ng-template>
+  <!-- UPDATE END-->
+
+
+  <!-- DELETE -->
+  <ng-template #deletecode let-modal>
+    <div class="modal-header" >
+      <h4 class="modal-title " id="modal-title">Confirm Delete Code</h4>
+      <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-center">
+      <p><strong>Are you sure you want to delete <span class="text-primary">" {{codeName}} "</span> ?</strong></p>
+      <p>
+      <span class="text-danger">This operation can not be undone.</span>
+      </p>
+    </div>
+    <div class="modal-footer " >
+      <!-- <div style="margin: auto;" class="row"> -->
+        <button type="button" class="btn btn-outline-secondary " (click)="modal.dismiss('cancel click')">Cancel</button>
+        <!-- <div class="col"></div> -->
+        <button type="button" class="btn btn-danger " (click)="modal.close('Ok click')">Ok</button>
+      <!-- </div> -->
+    </div>
+  </ng-template>
+  <!-- DELETE END-->
+  
+  <swal #Swal></swal>

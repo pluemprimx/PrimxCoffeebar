@@ -1,0 +1,253 @@
+
+<div class="container">
+
+
+    <div class="nav" >
+        <button type="button" *ngIf="amountOrder != 0" class="btn btn-outline-primary" (click)="modalCart(modalcart)">
+          <i-feather name="shopping-cart" style="width: 30px;"> </i-feather>
+            <span  class="badge badge-danger">{{amountOrder}}</span>
+        </button>
+      
+        <form class="form-inline my-2 my-lg-0" style="margin-left: auto;" [formGroup]="search" >
+          <i-feather name="search"></i-feather>
+          <div class="d-inline-block" ngbDropdown >
+            <button class="btn btn-outline-primary mr-2" id="dropdownBasic1" ngbDropdownToggle>Search Type</button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" >
+              <button ngbDropdownItem value="0" (click)="FilterProduct($event)">ทั้งหมด</button>
+              <button ngbDropdownItem value="1" (click)="FilterProduct($event)">เครื่องดื่ม</button>
+              <button ngbDropdownItem value="2" (click)="FilterProduct($event)">ขนม</button>
+              <!-- <button ngbDropdownItem value="3" (click)="FilterProduct($event)">รหัสลับ</button> -->
+            </div>
+          </div>
+          <input class="form-control mr-sm-2 " type="text" placeholder="Search" (keyup)="searchProduct()" formControlName="product"  aria-label="Search" >
+          <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="searchProduct()" >Search</button> -->
+        </form>
+      </div>
+    
+    <br>
+    <div *ngIf="status != 0; else elseBlock" > 
+      <div class="card-columns" style="padding-left: 30px;">
+        <div *ngFor="let product of products " > 
+        <div *ngIf="product['product_status'] != 'ไม่ขาย'" > 
+      <div class="card box-shadow" style="width: 18rem;" >  
+        <img src="{{product['product_img']}}" class="card-img-top" style="max-width:100%;height:auto;">
+        <div class="card-body">
+          <h5 class="card-title">
+            <span *ngIf="product['product_type'] == 'เครื่องดื่ม'">
+              <i-feather name="coffee"></i-feather>
+            </span>
+            <span *ngIf="product['product_type'] == 'ขนม'">
+              <i-feather name="cloud"></i-feather>
+            </span>
+            {{ product['product_name'] }}</h5>
+          <p class="card-text">Cost : {{ product['product_cost'] }}</p>
+          <p class="card-text">Type : {{ product['product_type'] }}</p>
+          <p class="card-text">Detail : {{ product['product_detail'] }}</p>
+          <table style="margin: auto;">
+            <tr >
+              <td><button href="#" class="btn btn-outline-primary" (click)="modalOrderProduct(contentorderProduct,product)">
+                Order
+              </button></td> 
+            </tr>
+          </table>
+        </div>
+    </div>
+</div>
+</div>
+</div> 
+</div>
+    
+    <ng-template #elseBlock >
+      <div >
+        <p style="text-align: center">No Product</p>
+      </div>
+    </ng-template>
+    
+</div>
+
+<ng-template #contentorderProduct let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add To Cart</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form  [formGroup]="orderdata">
+      <div class="form-group">
+       <h3> <label >Menu Name : </label>
+        {{orderdata.value.order_menu}} </h3>
+        <input type="hidden" id="order_menu" class="form-control" formControlName="order_menu" required>
+        <!-- <div *ngIf="productData.value.product_name == '' || productData.value.product_name == null" class="alert alert-danger">
+          Product Name is required.
+        </div> -->
+        <h3><label >Total Cost : </label>
+        {{orderdata.value.order_cost}}</h3>
+        <input  type="hidden" id="order_cost"  class="form-control" formControlName="order_cost" required>
+        <!-- <div *ngIf="productData.value.product_cost == '' || productData.value.product_cost == null" class="alert alert-danger">
+          Product Cost is required.
+        </div> -->
+        <h5 *ngIf="commentDetail"><label > Extra : </label>
+          {{commentDetail}}</h5>
+        
+        <br>
+        <!-- <form [formGroup]="tempRadio">
+          <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" formControlName="Temperature">
+            <label ngbButtonLabel class="btn-outline-primary">
+              <input ngbButton type="radio" value="ร้อน">Hot
+            </label>
+            <label ngbButtonLabel class="btn-outline-primary">
+              <input ngbButton type="radio" value="เย็น" checked>Iced
+            </label>
+          </div>
+        </form>
+        {{tempRadio.value.Temperature}} -->
+        <div > <button class="btn btn-outline-warning" (click)="modalExtraDetail(modalextradetail)">Add Extra</button></div>
+       <br>
+       
+        
+       <div class="row">
+        <div *ngFor="let extradetail of extraDetails" >
+          <div *ngIf="extradetail.extra_name != null" class="col">
+          <ngb-alert type="{{extradetail.color}}" (close)="close(extradetail.extra_index)"> {{extradetail.extra_name}} {{extradetail.extra_cost}} บาท</ngb-alert>
+        </div>
+      </div>
+       </div>
+         
+        
+        <div class="input-group mb-3">
+          <input placeholder="If there is anything else" type="text" [value]="orderdata.value.order_comment" (blur)="addComment()" id="order_comment" class="form-control" formControlName="order_comment" required>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" (click)="addComment()">Add</button>
+          </div>
+        </div>
+      <!-- <option *ngFor="let type of types" [value]="type" class="form-control">{{ type }}</option> 
+      </select> -->
+      <!-- <div *ngIf="productData.value.product_type == '' || productData.value.product_type == null" class="alert alert-danger">
+        Product Type is required.
+      </div> -->
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer" >
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+  </div>
+</ng-template>
+
+<!-- detail -->
+<ng-template #modalextradetail let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add Extra</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+
+     
+    <div class="card box-shadow">
+      <table class="table text-center" >
+        <thead class="thead table-secondary">
+        <tr>
+          <th>Extra</th>
+          <th>cost</th>
+          <th>select</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let ex of extra" > 
+            <th  *ngIf="ex['extra_type'] == productType" >{{ex['extra_name']}} </th>
+            <td *ngIf="ex['extra_type'] == productType">{{ex['extra_cost']}} </td>
+            <td *ngIf="ex['extra_type'] == productType">
+              <button class="btn btn-outline-{{ex['color']}}" (click)="saveExtra(ex['extra_name'],ex['extra_cost'])" (click)="modal.close('Save click')">Add</button>
+            </td>   
+      </tr>
+      </tbody>
+    </table>
+  </div>
+          <!-- <div class="card-columns"> 
+          <div *ngFor="let ex of extra" class="row"> 
+           <div class="col">
+           <input ngbButton type="radio" [value]="ex">{{ex['extra_name']}} 
+            <ngb-alert type="{{ex['color']}}" (click)="saveExtra(ex['extra_name'],ex['extra_cost'])" (click)="modal.close('Save click')">{{ex['extra_name']}}</ngb-alert>
+           </div>
+        </div>
+      </div> -->
+
+  </div>
+</ng-template>
+
+<!-- cart -->
+<ng-template #modalcart let-modal>
+  <div class="modal-header" >
+    <h4 class="modal-title" id="modal-basic-title">Cart</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="totalCost != 0;else elseBlock">
+
+    <div class="nav" >
+    <h4>Total Cost : <span class="h2 text-primary">{{totalCost}}</span> บาท</h4>
+    <form class="form-inline my-2 my-lg-0" style="margin-left: auto;">
+      <input type="text"  class="form-control mr-sm-2 " placeholder="Customer" placement="right" (keyup)="getCostomer($event)">
+    </form>
+    </div> <br> 
+
+        <table class="table table-striped" style="text-align: center;">
+          <thead>
+          <tr>
+           
+            <th scope="col" >Menu</th>
+            <th scope="col" >Cost</th>
+            <th scope="col" >Detail</th>
+            <th scope="col" ></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let menu of cartArray" > 
+              <th *ngIf="menu.menu_name != null"> {{menu.menu_name}}</th>
+              <td *ngIf="menu.menu_name != null">{{menu.menu_cost}}</td>
+              <td *ngIf="menu.menu_name != null">{{menu.menu_detail}}</td>
+              <td *ngIf="menu.menu_name != null">
+                <button type="button" class="close" aria-label="Close" (click)=" cancleOrder(menu.index)" >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #elseBlock>
+      <p style="text-align: center">No Order</p> 
+    </ng-template>
+  </div>
+  <div class="modal-footer" *ngIf="amountOrder" >
+      <button type="button" class="btn btn-outline-danger" (click)="cancelCart()" (click)="modal.dismiss('Cross click')">cancel all</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Confirm</button>
+  </div>
+</ng-template>
+
+
+<!-- DELETE 
+<ng-template #deletecontent let-modal>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-title">Confirm Delete</h4>
+  <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <p><strong>Are you sure you want to delete <span class="text-primary">" {{productName}} "</span> ?</strong></p>
+  <p>
+  <span class="text-danger">This operation can not be undone.</span>
+  </p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+  <button type="button" class="btn btn-danger" (click)="modal.close('Ok click')">Ok</button>
+</div>
+</ng-template> -->
+
+<swal #Swal></swal>

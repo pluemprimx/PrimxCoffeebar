@@ -1,0 +1,316 @@
+<div class="container" *ngIf="orderdata.length != 0;else elseBlock2">
+
+
+<div  class="row row-cols-1 row-cols-md-3" >
+  <div *ngFor="let order of orderdata" >
+     <div *ngIf="order['order_status'] !== 'ยกเลิกรายการ' "> 
+       <div class="col mb-4" >
+      <div class="card box-shadow " style="width: 20rem;" >
+        <div class="card-header bg-{{order['color']}}" >
+            <div class="row">
+                <div class="card-title col h5">Order : {{order['order_id']}}
+                  
+                </div>
+               
+                <ngb-alert [dismissible]="false" type="{{order['color']}}" class="text-center col" style="margin-right: auto; text-align: right;">{{order['order_status']}}</ngb-alert>
+            </div>
+        </div>
+          <div class="card-body">
+              
+                 
+                    <div class="h5">Table : {{order['order_table']}}</div>
+                    <div class="h6">Customer : {{order['order_costumer']}}</div>
+                    <div >Date : {{order['order_newdate']}}</div>
+                    <div >Time : {{order['order_newtime']}}</div>
+                    <div class="h6">Total cost : <span class="text-primary h5">{{order['order_cost']}}</span> bath</div>
+                    <div class="h6">Payment :
+                      <span class="text-danger h5" *ngIf="order['order_receipt'] == 'ยังไม่ชำระเงิน'">
+                      {{order['order_receipt']}}
+                    </span>
+                    <span class="text-success h5" *ngIf="order['order_receipt'] != 'ยังไม่ชำระเงิน'">
+                      {{order['order_receipt']}}
+                    </span></div>
+              
+                   
+                             
+              <div *ngIf="order['button'] == 'ยืนยัน'">
+
+              <button class="btn btn-outline-primary btn-block" (click)="modalViewDetail(modaldetail,order['order_id'],order['order_status'])"><i-feather name="file-text"></i-feather>ดูรายละเอียด</button>      
+          
+             <!--    <button  *ngIf="order['order_receipt'] == 'ยังไม่ชำระเงิน'" class="btn btn-outline-success btn-block" (click)="checkOut(checkout,order)" ><i-feather name="check-square"></i-feather>ชำระเงิน</button>
+               -->
+              <button class="btn btn-outline-{{order['color']}} btn-block" (click)="updateOrderStatus1(order,order['value'])">{{order['button']}}</button>
+
+              <button class="btn btn-danger btn-block" (click)="confirmCancelOrder(comfirmcancelordercontent,order)">
+                <i-feather name="trash-2" ></i-feather>
+              </button>
+              
+            </div>
+          
+            <div *ngIf="order['button'] == 'เสร็จแล้ว'">
+             
+                <button class="btn btn-outline-primary btn-block " (click)="modalViewDetail(modaldetail,order['order_id'],order['order_status'])">
+                  <i-feather name="file-text"></i-feather>
+                  ดูรายละเอียด</button>
+                  <!-- <button class="btn btn-outline-{{order['color']}} col" (click)="checkOut(checkout,order)" >{{order['button']}}</button> -->
+                 
+                    <button *ngIf="order['order_receipt'] == 'ยังไม่ชำระเงิน'" class="btn btn-success btn-block " (click)="checkOut(checkout,order)" ><i-feather name="check-square"></i-feather>ชำระเงิน</button>
+                 
+                   
+            </div>
+
+            <div *ngIf="order['button'] == 'รับสินค้า'">
+              <button class="btn btn-outline-primary btn-block" (click)="checkOut(checkout,order)">
+                <i-feather name="file-text"></i-feather>
+                ดูรายละเอียด</button>
+                <button class="btn btn-outline-{{order['color']}} btn-block" (click)="customerGetproduct(order)" ><i-feather name="shopping-bag"></i-feather>{{order['button']}}</button>
+            </div>
+
+            <div *ngIf="order['button'] == 'ชำระเงิน'">
+              <button class="btn btn-{{order['color']}} btn-block" (click)="checkOut(checkout,order)" ><i-feather name="check-square"></i-feather>{{order['button']}}</button>
+          </div>
+            <!-- <div *ngIf="order['button'] == 'ชำระเงิน'">
+              <div *ngIf="order['order_receipt'] == 'ยังไม่ชำระเงิน';else elseBlock3">
+                <button class="btn btn-outline-success btn-block col" (click)="checkOut(checkout,order)" ><i-feather name="check-square"></i-feather>ชำระเงิน</button>
+              </div>
+              <ng-template #elseBlock3>
+                <div *ngIf="order['button'] == 'เรียกรับสินค้า' ">
+                  <button class="btn btn-outline-{{order['color']}} btn-block" (click)="checkOut(checkout,order)" ><i-feather name="check-square"></i-feather>{{order['button']}}</button>
+                </div> 
+              </ng-template> 
+            </div> -->
+            <!-- <div *ngIf="order['button'] == 'เรียกรับสินค้า' ">
+              <button class="btn btn-outline-{{order['color']}} btn-block" (click)="checkOut(checkout,order)" ><i-feather name="check-square"></i-feather>{{order['button']}}</button>
+            </div>  -->
+          </div>
+        
+    </div>
+    </div>
+  </div>
+  </div>
+
+    <br>
+</div>
+
+
+
+
+
+    <!--     -->
+
+</div>
+
+<ng-template #elseBlock2>
+  <div class="text-center" style="text-align: center;">
+    No Order
+  </div>
+</ng-template> 
+
+
+<ng-template #modaldetail let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title"><i-feather name="file-text"></i-feather>View Detail <span class="text-primary">Order : {{orderdetaildata.order_id}}</span></h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+     
+        <div class="card box-shadow">
+        
+        <table class="table text-left" >
+            <thead class="thead table-secondary">
+            <tr>
+              <th>Menu</th>
+              <th>Cost</th>
+              <th>Detail</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let orderDetail of orderdetaildata;let i = index" > 
+                <th >{{orderDetail['orderdetail_menu']}} </th>
+                <td >{{orderDetail['orderdetail_cost']}} </td>
+                <td >{{orderDetail['orderdetail_detail']}}</td>
+                <td>
+                  <div *ngIf="orderdetaildata.status != 'กำลังดำเนินการ';else elseBlock">
+                  </div>
+                  <ng-template #elseBlock>
+                    <div *ngIf="orderDetail['orderdetail_status'] != 'เสร็จแล้ว';else elseBlock1">
+                      <button class="btn btn-outline-warning " (click)="checkOrder(orderDetail)" >{{orderDetail['orderdetail_status']}}</button>
+                    </div>
+                    <ng-template #elseBlock1>
+                        <button class="btn btn-outline-success">{{orderDetail['orderdetail_status']}}</button>
+                      </ng-template>
+                    </ng-template>
+                </td>
+          </tr>
+          </tbody>
+        </table>
+    </div>
+    </div>
+    <div class="modal-footer" >
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    </div>
+  </ng-template>
+
+
+  <ng-template #checkout let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title"><i-feather name="check-square"></i-feather>Checkout</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div>
+        
+        <div class="h3">Order : {{check['order_id']}}</div>
+        <div class="row">
+        <div class="h5 col">Table : {{check['order_table']}}</div>
+        <div class="h5 col">Customer : {{check['order_costumer']}}</div>
+        </div>
+       
+        <div class="row">
+          <div class="col">Date : {{check['order_newdate']}}</div>
+          <div class="col">Time : {{check['order_newtime']}}</div>
+        </div>
+        <div class="row">
+          <div class="h4 text-left col">Payment Status : 
+            <span class="text-danger" *ngIf="check['order_receipt'] == 'ยังไม่ชำระเงิน'">
+              {{check['order_receipt']}}
+            </span>
+            <span class="text-success" *ngIf="check['order_receipt'] != 'ยังไม่ชำระเงิน'">
+              {{check['order_receipt']}}
+            </span>
+          </div>
+          <div class="h3 text-right col">Total cost : <span class="text-primary h1">{{check['order_cost']}}</span> bath</div>
+        </div>
+       
+      </div>
+      <div class="card box-shadow">
+      <table class="table text-left" >
+        <thead class="thead table-secondary">
+        <tr>
+          <th>Menu</th>
+          <th>Cost</th>
+          <th>Detail</th>
+         
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let orderDetail of orderdetaildata" > 
+            <th >{{orderDetail['orderdetail_menu']}} </th>
+            <td >{{orderDetail['orderdetail_cost']}} </td>
+            <td >{{orderDetail['orderdetail_detail']}}</td> 
+               
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <br>
+  <div *ngIf="check['order_receipt'] == 'ยังไม่ชำระเงิน'">
+    <div class="text-right">
+      <button type="button" class="btn btn-outline-warning " (click)="addCode(addcode)">Add Code</button>
+    </div>
+    <br>
+    
+        <form >
+          <div class="form-group">
+            
+            <div class="input-group">
+              <label class="input-group-text">จำนวนเงินที่รับมา</label>
+              <input placeholder="Cash" class="form-control" type="number" min="0" pattern="[0-9]" (keyup)="getCash($event)" required>
+            </div>
+              <div class="h3 text-right">Cash : <span class=" h1">{{check['cash'] | number}}</span> bath</div>
+              
+              <div class="text-right">
+                <div *ngIf="check['status'] != 1 ;else elseBlock" class="text-danger">
+                  {{check['status']}}
+                </div>
+              <ng-template #elseBlock>
+              <div class="h3 text-right">Change :  <span class="text-success h1">{{check['change'] | number}}</span> bath</div>
+            </ng-template>
+            </div>
+           
+          </div>
+        </form>
+      </div>
+      <div *ngIf="check['status'] != 1 ;else elseBlock1"></div>
+      <ng-template #elseBlock1>
+      <div class="modal-footer" >
+        <button type="button" class="btn btn-outline-success" (click)="modal.close('Save click')">Confirm Checkout</button>
+      </div>
+    </ng-template>
+  </div>
+  
+  </ng-template>
+
+
+
+  <ng-template #addcode let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Add Code</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      
+      <div class="card box-shadow">
+        <table class="table text-center" >
+          <thead class="thead table-secondary">
+          <tr>
+            <th>code</th>
+            <th>cost</th>
+            <th>type</th>
+            <th>seclect</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let code of codeArray" > 
+           
+              <th *ngIf="code['code_status'] == 'ใช้งาน'" >{{code['code_name']}} </th>
+              <td *ngIf="code['code_status'] == 'ใช้งาน'">{{code['code_cost']}} </td>
+              <td *ngIf="code['code_status'] == 'ใช้งาน'">{{code['code_type']}} </td>
+              <td *ngIf="code['code_status'] == 'ใช้งาน'">
+                <button class="btn btn-outline-primary" (click)="insertCode(code)" (click)="modal.close('Save click')">Add</button>
+              </td>   
+               
+        </tr>
+        </tbody>
+      </table>
+    </div>
+      
+    </div>
+    <div class="modal-footer" >
+      <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    </div>
+  </ng-template>
+  
+
+  <ng-template #comfirmcancelordercontent let-modal >
+    <div class="modal-header" >
+      <h4 class="modal-title " id="modal-title">Confirm Delete</h4>
+      <button type="button" class="close" aria-describedby="modal-title" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body text-center">
+      <p><strong>Are you sure you want to delete <span class="text-primary">"Order : {{orderId}} "</span> ?</strong></p>
+      <p>
+      <span class="text-danger">This operation can not be undone.</span>
+      </p>
+    </div>
+    <div class="modal-footer " >
+      <!-- <div style="margin: auto;" class="row"> -->
+        <button type="button" class="btn btn-outline-secondary " (click)="modal.dismiss('cancel click')">Cancel</button>
+        <!-- <div class="col"></div> -->
+        <button type="button" class="btn btn-danger " (click)="modal.close('Ok click')">Ok</button>
+      <!-- </div> -->
+    </div>
+    </ng-template>
+
+
+  <swal #Swal></swal>
+
